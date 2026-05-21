@@ -1,0 +1,61 @@
+# MDLBeast Member App — Project Context for Cursor AI
+
+This is the **MDLBeast Member App** — a React Native (Expo) mobile application
+for members of MDLBeast's private club. Jira project: **MAR** (board 490),
+61 tickets across 15 epics.
+
+## Tech Stack
+- **Framework**: React Native with Expo SDK 56+ (managed workflow)
+- **Language**: TypeScript — strict mode. NEVER use `any`.
+- **Navigation**: Expo Router (file-based, app/ directory)
+- **Styling**: NativeWind v4 (Tailwind CSS utility classes). Do NOT use `StyleSheet.create`.
+- **Server State**: TanStack Query v5
+- **Global State**: Zustand
+- **HTTP**: Axios with interceptors for PeopleVine token refresh (MAR-23)
+- **Secure Storage**: Expo SecureStore (auth tokens, passcode hash)
+- **Biometrics**: Expo Local Authentication (FaceID/fingerprint — MAR-20, MAR-21)
+- **WebView**: react-native-webview (booking flows: SevenRooms, SynXis, Webstore)
+- **Images**: Expo Image (with Cloudinary CDN + blurhash placeholders)
+- **CMS**: Strapi v5 (all editorial content — amenities, FAQs, T&Cs, Privé/Attaché)
+
+## Membership Tier System (CRITICAL)
+Every member has a tier returned from PeopleVine at login. Tier drives navigation,
+homepage variant, and feature visibility throughout the app.
+
+```
+type Tier = 'visitor' | 'pool_club' | 'prive' | 'unstable';
+```
+
+- **visitor**     — Browse only, no bookings. Sees Visitor Homepage (MAR-24)
+- **pool_club**   — Pool, Gym, Restaurant, Rooms, Shisha bookings. (MAR-25)
+- **prive**       — Pool Club + Privé benefits/rules/what's-on. (MAR-26)
+- **unstable**    — All above + Attaché concierge + exclusive events. (MAR-27)
+
+Tier routing (MAR-28) runs immediately after login. Use `<TierGate minimum="prive">`
+to wrap tier-restricted content.
+
+## Third-Party Booking Integrations (all WebView-based)
+- **SevenRooms** → Restaurant table bookings (MAR-39, MAR-40)
+- **SynXis** → Hotel room / stay bookings (MAR-43, MAR-44, MAR-45)
+- **Webstore (MDLBeast)** → Gym PT sessions (MAR-36), Shisha (MAR-47)
+
+Tickets marked `[Webstore]` are WebView-driven. Use the shared `WebViewScreen` component;
+pre-fill member params; listen for return deep-link to confirm/cancel.
+
+## Coding Conventions
+- Always handle loading, error, and empty states.
+- Tier-restricted screens MUST be wrapped in `<TierGate>`.
+- All API calls go through services/ (peoplevine.ts, strapi.ts, sevenrooms.ts, synxis.ts).
+- Auth tokens go through Expo SecureStore — never AsyncStorage.
+- Path alias: `@/*` resolves to project root.
+- File names: kebab-case for route files (e.g. `pool-club.tsx`),
+  PascalCase for components (e.g. `BookingCard.tsx`).
+- Reference Jira ticket in feature commits: `feat(MAR-XX): description`.
+
+## Build Phases (reference)
+1. Foundation & Auth (MAR-4, 5, 16-23, 60)
+2. Homepage & Tier Routing (MAR-24-28)
+3. Native Amenity Screens (Pool, Gym, Restaurant LP, Shisha LP)
+4. WebView Booking Flows (MAR-36, 39, 43, 44, 45, 47)
+5. Privé, Attaché, Support (MAR-48-53, 57-59)
+6. Settings & Polish (MAR-54, 61, 62, 65 + EAS Build + Sentry)
