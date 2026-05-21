@@ -1,11 +1,4 @@
-/**
- * NOTE: ESLint 10 (currently installed) only supports flat config (eslint.config.js)
- * and IGNORES this file. To activate this config either:
- *   1. Downgrade ESLint: `pnpm add -D eslint@^8.57.0`, OR
- *   2. Migrate this content to `eslint.config.js` (flat config).
- *
- * This file is kept as a familiar reference of project lint intent.
- */
+// MDLBeast Member App — ESLint config (classic .eslintrc.* format, requires ESLint v8).
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
